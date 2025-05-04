@@ -29,12 +29,31 @@ def get_skiptracing_info(street, citystatezip):
         st.write("Raw API Response:")  # Display raw response
         st.json(raw_data)  # Show the full response as JSON for debugging
 
-        # Check if the response contains 'data' and it's not empty
-        if 'data' in raw_data and raw_data['data']:
-            return raw_data  # Return the data if present
+        # Check if the response contains 'PropertyDetails'
+        if 'PropertyDetails' in raw_data:
+            property_details = raw_data['PropertyDetails']
+            st.subheader("Property Details")
+            for key, value in property_details.items():
+                st.write(f"**{key}**: {value}")
+
+        # Check if the response contains 'PeopleDetails' and display phone numbers
+        if 'PeopleDetails' in raw_data:
+            st.subheader("People Associated with this Property")
+            for person in raw_data['PeopleDetails']:
+                st.write(f"**Name**: {person['Name']}")
+                st.write(f"**Age**: {person['Age']}")
+                st.write(f"**Lives in**: {person['Lives in']}")
+                
+                if person['Phone']:  # If phone numbers are available
+                    st.write("**Phone Numbers**:")
+                    for phone in person['Phone']:
+                        st.write(phone)
+                else:
+                    st.write("No phone numbers found.")
+                
+                st.write(f"[More Details](https://www.fastpeoplesearch.com/{person['Link']}")  # Link to person's details
         else:
-            st.warning("No data found for the given address.")  # If no data is found
-            return None
+            st.warning("No people details found for this address.")
     else:
         st.error(f"Error fetching data from the API. Status Code: {response.status_code}")
         return None
@@ -59,12 +78,7 @@ def main():
             
             if data:
                 # If data is found, display relevant information
-                if 'phoneNumbers' in data['data'][0]:
-                    st.subheader("Phone Numbers:")
-                    for phone in data['data'][0]['phoneNumbers']:
-                        st.write(phone['number'])
-                else:
-                    st.warning("No phone numbers found.")
+                pass  # Data is already displayed by the `get_skiptracing_info()` function
         else:
             st.warning("Please enter both street address and city, state, ZIP.")
 
