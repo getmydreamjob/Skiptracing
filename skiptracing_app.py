@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-import json
 
 # Set up the RapidAPI credentials
 RAPIDAPI_KEY = '68efe57bd5mshbb02503559ba90ep1e59bbjsn18b931a07505'
